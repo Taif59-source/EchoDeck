@@ -42,7 +42,7 @@ public class FFmpegService
 
     public async Task CreateSilenceAsync(string outputPath, double durationSeconds, CancellationToken ct = default)
     {
-        var args = $"-f lavfi -i anullsrc=r=44100:cl=stereo -t {durationSeconds:F3} -c:a aac -y \"{outputPath}\"";
+        var args = $"-f lavfi -i anullsrc=r=44100:cl=stereo -t {durationSeconds:F3} -c:a libmp3lame -y \"{outputPath}\"";
         await RunAsync(args, ct);
     }
 
@@ -56,7 +56,7 @@ public class FFmpegService
     {
         var scaleFilter = $"scale={width}:{height}:force_original_aspect_ratio=decrease,pad={width}:{height}:(ow-iw)/2:(oh-ih)/2";
         var args = $"-loop 1 -i \"{imagePath}\" -i \"{audioPath}\" " +
-                   $"-c:v libx264 -tune stillimage -c:a aac " +
+                   $"-c:v libx264 -preset veryfast -threads 2 -tune stillimage -c:a aac " +
                    $"-pix_fmt yuv420p -shortest " +
                    $"-vf \"{scaleFilter}\" " +
                    $"-r 30 -y \"{outputPath}\"";
@@ -73,7 +73,7 @@ public class FFmpegService
     {
         var scaleFilter = $"scale={width}:{height}:force_original_aspect_ratio=decrease,pad={width}:{height}:(ow-iw)/2:(oh-ih)/2";
         var args = $"-loop 1 -i \"{imagePath}\" -t {durationSeconds:F3} " +
-                   $"-c:v libx264 -tune stillimage " +
+                   $"-c:v libx264 -preset veryfast -threads 2 -tune stillimage " +
                    $"-pix_fmt yuv420p " +
                    $"-vf \"{scaleFilter}\" " +
                    $"-r 30 -y \"{outputPath}\"";
