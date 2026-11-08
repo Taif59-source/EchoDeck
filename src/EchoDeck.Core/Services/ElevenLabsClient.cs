@@ -39,7 +39,7 @@ public class ElevenLabsClient(HttpClient httpClient) : ITtsClient
                     continue;
                 }
 
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode) throw new HttpRequestException($"ElevenLabs {(int)response.StatusCode}: {await response.Content.ReadAsStringAsync(ct)}");
                 return await response.Content.ReadAsByteArrayAsync(ct);
             }
             catch (HttpRequestException) when (attempt <= 3)
